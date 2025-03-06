@@ -1,11 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Michael Shaffer</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Michael Shaffer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 40px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            margin-bottom: 40px;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+        }
+    </style>
 </head>
 <body>
-	<h1>Michael Shaffer</h1>
+    <h1>Michael Shaffer</h1>
+    <canvas id="simple-webgl" width="400" height="300"></canvas>
+    
+    <script>
+        // Get the canvas element
+        const canvas = document.getElementById('simple-webgl');
+        
+        // Initialize WebGL context
+        const gl = canvas.getContext('webgl');
+        
+        // Check if WebGL is available
+        if (!gl) {
+            alert('WebGL not supported in your browser');
+            return;
+        }
+        
+        // Set clear color (background color)
+        gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Black, fully opaque
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        
+        // Vertex shader source code
+        const vertexShaderSource = `
+            attribute vec2 a_position;
+            
+            void main() {
+                gl_Position = vec4(a_position, 0.0, 1.0);
+            }
+        `;
+        
+        // Fragment shader source code
+        const fragmentShaderSource = `
+            precision mediump float;
+            
+            void main() {
+                gl_FragColor = vec4(1.0, 0.0, 0.5, 1.0);  // Pink color
+            }
+        `;
+        
+        // Create shaders
+        const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+        gl.shaderSource(vertexShader, vertexShaderSource);
+        gl.compileShader(vertexShader);
+        
+        const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+        gl.shaderSource(fragmentShader, fragmentShaderSource);
+        gl.compileShader(fragmentShader);
+        
+        // Create program and link shaders
+        const program = gl.createProgram();
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+        gl.useProgram(program);
+        
+        // Create buffer for triangle vertices
+        const positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        
+        // Three vertices of a triangle
+        const positions = [
+            0.0, 0.5,    // top vertex
+            -0.5, -0.5,  // bottom left vertex
+            0.5, -0.5    // bottom right vertex
+        ];
+        
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+        
+        // Connect buffer to shader's a_position attribute
+        const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
+        gl.enableVertexAttribArray(positionAttributeLocation);
+        gl.vertexAttribPointer(
+            positionAttributeLocation,
+            2,        // 2 components per vertex
+            gl.FLOAT, // data type
+            false,    // don't normalize
+            0,        // stride (0 = auto)
+            0         // offset
+        );
+        
+        // Draw the triangle
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+    </script>
 </body>
 </html>
