@@ -1,5 +1,6 @@
 body {
 	background-color: #F5DEB3;
+	overflow: hidden;
 }
 
 #movable-dot {
@@ -7,10 +8,30 @@ body {
 	height: 20px;
 	background-color: black;
 	border-radius: 50%;
-
 	position: absolute;
-	top: 50%
-	left: 50%;
 
-	transition: all 0.01s ease-out;
+	z-index: 1000;
+	transform: translate(-50%, -50%)
+}
+
+.trail {
+	width: 8px;
+	height: 8px;
+	background-color: black;
+	border-radius: 50%;
+	position: absolute;
+
+	z-index: 999;
+	animation: fade-out 0.5s linear forwards;
+}
+
+@keyframes fade-out {
+	from {
+		opacity: 1;
+		transform: scale(1);
+	}
+	to {
+		opacity: 0;
+		transform: scale(0);
+	}
 }
